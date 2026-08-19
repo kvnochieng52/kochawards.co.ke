@@ -63,4 +63,12 @@ export interface Nominee {
   age?: number;
   languages?: string[];
   programs?: string[];
+
+  // Organization / group fields
+  chairperson?: string;
+  memberCount?: number;
+  foundedYear?: number;
+  amountMobilizedKes?: number;
+  registrationNo?: string;
+  meetingCadence?: string;
 }
