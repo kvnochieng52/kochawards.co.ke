@@ -1,0 +1,191 @@
+import type { Campaign, Nominee } from './types';
+
+export const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+
+const TOKEN_KEY = 'kura_admin_token';
+
+export function getToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    return localStorage.getItem(TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function setToken(token: string | null) {
+  if (typeof window === 'undefined') return;
+  try {
+    if (token) localStorage.setItem(TOKEN_KEY, token);
+    else localStorage.removeItem(TOKEN_KEY);
+  } catch {}
+}
+
+export class ApiError extends Error {
+  status: number;
+  errors?: Record<string, string[]>;
+  constructor(status: number, message: string, errors?: Record<string, string[]>) {
+    super(message);
+    this.status = status;
+    this.errors = errors;
+  }
+}
+
+interface FetchOpts extends Omit<RequestInit, 'body' | 'headers'> {
+  body?: unknown;
+  headers?: Record<string, string>;
+  auth?: boolean;
+  isFormData?: boolean;
+}
+
+export async function api<T = any>(path: string, opts: FetchOpts = {}): Promise<T> {
+  const { body, headers = {}, auth, isFormData, ...rest } = opts;
+
+  const h: Record<string, string> = {
+    Accept: 'application/json',
+    ...headers,
+  };
+  if (!isFormData && body !== undefined) h['Content-Type'] = 'application/json';
+
+  if (auth) {
+    const t = getToken();
+    if (t) h['Authorization'] = `Bearer ${t}`;
+  }
+
+  const url = path.startsWith('http') ? path : `${API_URL}${path}`;
+  const res = await fetch(url, {
+    ...rest,
+    headers: h,
+    body:
+      body === undefined
+        ? undefined
+        : isFormData
+          ? (body as FormData)
+          : JSON.stringify(body),
+    cache: 'no-store',
+  });
+
+  const text = await res.text();
+  let json: any = null;
+  try {
+    json = text ? JSON.parse(text) : null;
+  } catch {
+    // non-JSON response
+  }
+
+  if (!res.ok) {
+    const message = json?.message || `Request failed (${res.status})`;
+    throw new ApiError(res.status, message, json?.errors);
+  }
+  return json as T;
+}
+
+/* -------------------- Typed shortcuts -------------------- */
+
+interface Wrapped<T> {
+  data: T;
+}
+
+export const publicApi = {
+  campaigns: () =>
+    api<Wrapped<Campaign[]>>('/campaigns').then((r) => r.data),
+  campaign: (slug: string) =>
+    api<Wrapped<Campaign>>(`/campaigns/${slug}`).then((r) => r.data),
+  campaignNominees: (slug: string) =>
+    api<Wrapped<Nominee[]>>(`/campaigns/${slug}/nominees`).then((r) => r.data),
+  nominee: (id: string | number) =>
+    api<Wrapped<Nominee>>(`/nominees/${id}`).then((r) => r.data),
+  trending: (limit = 6) =>
+    api<Wrapped<Nominee[]>>(`/nominees/trending?limit=${limit}`).then((r) => r.data),
+};
+
+export const authApi = {
+  login: (email: string, password: string) =>
+    api<{ token: string; user: { id: number; name: string; email: string; is_admin: boolean } }>(
+      '/auth/login',
+      { method: 'POST', body: { email, password } }
+    ),
+  me: () =>
+    api<{ user: { id: number; name: string; email: string; is_admin: boolean } }>(
+      '/auth/me',
+      { auth: true }
+    ),
+  logout: () => api('/auth/logout', { method: 'POST', auth: true }),
+};
+
+export const voteApi = {
+  initiate: (payload: { nominee_id: number; phone: string; amount: number }) =>
+    api<Wrapped<any> & { message: string }>('/votes/initiate', {
+      method: 'POST',
+      body: payload,
+    }),
+  status: (voteId: number | string) =>
+    api<Wrapped<any>>(`/votes/${voteId}/status`),
+  simulate: (voteId: number | string) =>
+    api<Wrapped<any>>(`/votes/${voteId}/simulate`, { method: 'POST' }),
+};
+
+export const adminApi = {
+  stats: () => api<any>('/admin/stats', { auth: true }),
+
+  listCampaigns: () =>
+    api<Wrapped<Campaign[]>>('/admin/campaigns', { auth: true }).then((r) => r.data),
+  createCampaign: (payload: Record<string, any>) =>
+    api<Wrapped<Campaign>>('/admin/campaigns', {
+      method: 'POST',
+      body: payload,
+      auth: true,
+    }),
+  updateCampaign: (id: number | string, payload: Record<string, any>) =>
+    api<Wrapped<Campaign>>(`/admin/campaigns/${id}`, {
+      method: 'PUT',
+      body: payload,
+      auth: true,
+    }),
+  deleteCampaign: (id: number | string) =>
+    api(`/admin/campaigns/${id}`, { method: 'DELETE', auth: true }),
+
+  listNominees: (params: { campaign_id?: number | string; search?: string } = {}) => {
+    const qs = new URLSearchParams();
+    if (params.campaign_id) qs.set('campaign_id', String(params.campaign_id));
+    if (params.search) qs.set('search', params.search);
+    const suffix = qs.toString() ? `?${qs}` : '';
+    return api<Wrapped<Nominee[]>>(`/admin/nominees${suffix}`, { auth: true }).then(
+      (r) => r.data
+    );
+  },
+  createNominee: (payload: Record<string, any>) =>
+    api<Wrapped<Nominee>>('/admin/nominees', {
+      method: 'POST',
+      body: payload,
+      auth: true,
+    }),
+  updateNominee: (id: number | string, payload: Record<string, any>) =>
+    api<Wrapped<Nominee>>(`/admin/nominees/${id}`, {
+      method: 'PUT',
+      body: payload,
+      auth: true,
+    }),
+  deleteNominee: (id: number | string) =>
+    api(`/admin/nominees/${id}`, { method: 'DELETE', auth: true }),
+
+  payments: (params: { status?: string; range?: string } = {}) => {
+    const qs = new URLSearchParams();
+    if (params.status) qs.set('status', params.status);
+    if (params.range) qs.set('range', params.range);
+    return api<any>(`/admin/payments?${qs}`, { auth: true });
+  },
+
+  uploadImage: (file: File, kind: 'photo' | 'cover' | 'campaign' = 'photo') => {
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('kind', kind);
+    return api<{ path: string; url: string }>('/admin/uploads', {
+      method: 'POST',
+      body: fd,
+      auth: true,
+      isFormData: true,
+    });
+  },
+};

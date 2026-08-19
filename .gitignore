@@ -1,0 +1,51 @@
+# macOS
+.DS_Store
+
+# ---- Backend (Laravel) ----
+backend/.env
+backend/.env.backup
+backend/.env.production
+backend/.phpunit.result.cache
+backend/vendor/
+backend/node_modules/
+backend/public/hot
+backend/public/storage
+backend/storage/*.key
+backend/storage/pail
+backend/storage/logs/*.log
+backend/storage/framework/cache/data/*
+backend/storage/framework/sessions/*
+backend/storage/framework/testing/*
+backend/storage/framework/views/*
+!backend/storage/framework/cache/data/.gitignore
+!backend/storage/framework/sessions/.gitignore
+!backend/storage/framework/testing/.gitignore
+!backend/storage/framework/views/.gitignore
+backend/Homestead.json
+backend/Homestead.yaml
+backend/auth.json
+
+# ---- Frontend (Next.js) ----
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.pnpm-debug.log*
+frontend/.vercel
+
+# ---- Editor / OS ----
+.vscode/
+.idea/
+*.swp
+*.log
+
+# ---- Local claude state ----
+.claude/
