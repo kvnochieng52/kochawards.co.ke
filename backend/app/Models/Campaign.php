@@ -61,10 +61,9 @@ class Campaign extends Model
         return $this->hasMany(Vote::class);
     }
 
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
-    }
+    // Public routes explicitly bind by {campaign:slug}.
+    // Admin routes (apiResource) bind by primary key (id) so PUT/DELETE
+    // work with numeric IDs sent from the admin UI.
 
     /** Successful vote total across all nominees in this campaign */
     public function totalVotes(): int
