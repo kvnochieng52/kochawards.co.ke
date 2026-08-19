@@ -1,3 +1,5 @@
+import Link from 'next/link';
+import { Trophy } from 'lucide-react';
 import { CampaignCard } from '@/components/CampaignCard';
 import { HeroFeatured } from '@/components/HeroFeatured';
 import { StatsStrip } from '@/components/StatsStrip';
@@ -5,18 +7,48 @@ import { CategoryPills } from '@/components/CategoryPills';
 import { TrendingNominees } from '@/components/TrendingNominees';
 import { HowItWorks } from '@/components/HowItWorks';
 import { publicApi } from '@/lib/api';
+import type { Campaign } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const campaigns = await publicApi.campaigns().catch(() => []);
+  let campaigns: Campaign[] = [];
+  let apiError: string | null = null;
+  try {
+    campaigns = await publicApi.campaigns();
+  } catch (e: any) {
+    apiError = e?.message || 'Could not reach the API';
+  }
+
+  if (apiError) {
+    return (
+      <div className="container-x py-24 text-center">
+        <div className="heading-display text-3xl text-strong">We’re having trouble connecting.</div>
+        <p className="mt-2 text-muted">
+          Please try again in a moment. If the problem persists, contact support.
+        </p>
+        <p className="mt-4 text-[11px] text-faint">Error: {apiError}</p>
+      </div>
+    );
+  }
+
   if (campaigns.length === 0) {
     return (
       <div className="container-x py-24 text-center">
-        <div className="heading-display text-3xl text-strong">Kura is starting up…</div>
-        <p className="mt-2 text-muted">
-          Backend not reachable. Start the Laravel server on port 8000.
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-500/10 text-brand-700 dark:text-brand-300">
+          <Trophy className="h-7 w-7" />
+        </div>
+        <div className="heading-display mt-5 text-3xl text-strong">
+          No campaigns are open right now
+        </div>
+        <p className="mx-auto mt-2 max-w-md text-muted">
+          Check back soon — new voting campaigns are announced regularly.
         </p>
+        <div className="mt-6">
+          <Link href="/admin/login" className="btn-ghost !text-xs">
+            Admin sign-in
+          </Link>
+        </div>
       </div>
     );
   }
