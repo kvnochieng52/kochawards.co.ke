@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('category');
             $table->string('organizer')->nullable();
             $table->string('location')->nullable();
-            $table->timestamp('start_date');
-            $table->timestamp('end_date');
+            $table->dateTime('start_date');
+            $table->dateTime('end_date');
             $table->unsignedInteger('vote_price_kes')->default(10);
             $table->enum('status', ['upcoming', 'live', 'ended'])->default('upcoming');
             $table->boolean('featured')->default(false);
