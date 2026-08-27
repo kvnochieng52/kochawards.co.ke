@@ -29,49 +29,50 @@ export default async function CampaignPage({ params }: Params) {
 
   return (
     <div>
-      {/* Compact banner */}
-      <div className="relative h-52 w-full overflow-hidden bg-gradient-to-br from-brand-500/30 via-brand-500/10 to-accent-500/30 md:h-60">
-        {c.featuredImage && (
-          <Image
-            src={c.featuredImage}
-            alt={c.title}
-            fill
-            priority
-            className={`object-cover ${closed ? 'grayscale-[35%]' : ''}`}
-          />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/25" />
-        <div className="container-x relative flex h-full flex-col justify-end pb-5">
-          <Link href="/" className="link-back mb-3 w-fit">
-            <ArrowLeft className="h-4 w-4" /> All campaigns
-          </Link>
-          <div className="mb-2 flex flex-wrap items-center gap-2">
+      {/* Poster + title header — poster shown clean, title lives below */}
+      <div className="container-x pt-6">
+        <Link href="/" className="link-back mb-4 w-fit">
+          <ArrowLeft className="h-4 w-4" /> All campaigns
+        </Link>
+
+        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-3xl border border-slate-200 bg-slate-100 dark:border-white/10 dark:bg-white/[0.03] md:aspect-[16/6]">
+          {c.featuredImage && (
+            <Image
+              src={c.featuredImage}
+              alt={c.title}
+              fill
+              priority
+              className={`object-contain ${closed ? 'grayscale-[35%]' : ''}`}
+            />
+          )}
+        </div>
+
+        <div className="mt-5">
+          <div className="mb-3 flex flex-wrap items-center gap-2">
             {closed ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-600 bg-brand-700 px-3 py-1 text-xs font-semibold uppercase text-white shadow-sm">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-500/40 bg-brand-500/10 px-3 py-1 text-xs font-semibold uppercase text-brand-700 dark:text-brand-300">
                 <CheckCircle2 className="h-3.5 w-3.5" /> Closed
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-500 bg-brand-600 px-3 py-1 text-xs font-semibold uppercase text-white shadow-sm">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-500 bg-brand-600 px-3 py-1 text-xs font-semibold uppercase text-white">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
                 {c.status}
               </span>
             )}
-            <span className="inline-flex items-center rounded-full border border-white/20 bg-black/40 px-3 py-1 text-xs font-medium text-white backdrop-blur">
-              {c.category}
-            </span>
-            <span className="inline-flex items-center gap-1 rounded-full border border-white/20 bg-black/40 px-3 py-1 text-xs font-medium text-white backdrop-blur">
+            <span className="chip">{c.category}</span>
+            <span className="chip">
               <MapPin className="h-3 w-3" />
               {c.location}
             </span>
           </div>
-          <h1 className="heading-display text-2xl text-white text-balance md:text-4xl">
+          <h1 className="heading-display text-3xl text-strong text-balance md:text-4xl">
             {c.title}
           </h1>
-          <p className="mt-1 max-w-2xl text-sm text-white/85 md:text-base">{c.tagline}</p>
+          <p className="mt-2 max-w-3xl text-base text-muted md:text-lg">{c.tagline}</p>
         </div>
       </div>
 
-      <div className="container-x mt-6">
+      <div className="container-x mt-8">
         <div className="grid gap-6 md:grid-cols-[320px_1fr] lg:grid-cols-[360px_1fr]">
           <aside className="space-y-3 md:sticky md:top-20 md:self-start">
             {closed ? (

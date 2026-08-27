@@ -65,28 +65,27 @@ export function HeroFeatured({ campaign }: { campaign: Campaign }) {
             </div>
 
             <div className="relative">
-              <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-brand-500/30 to-accent-500/30 dark:border-white/10">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-slate-200 bg-slate-100 dark:border-white/10 dark:bg-white/[0.03]">
                 {campaign.featuredImage && (
                   <Image
                     src={campaign.featuredImage}
                     alt={campaign.title}
                     fill
                     priority
-                    className="object-cover"
+                    className="object-contain"
                   />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+              </div>
 
-                <div className="absolute inset-x-4 bottom-4 rounded-2xl border border-white/20 bg-black/50 p-4 backdrop-blur-xl">
-                  <div className="flex items-center justify-between text-xs text-white/80">
-                    <span>Vote from</span>
-                    <span className="rounded-full bg-brand-500/25 px-2 py-0.5 font-semibold text-white">
-                      KES {campaign.votePriceKes}
-                    </span>
-                  </div>
-                  <div className="mt-1 text-sm text-white">
-                    Paid instantly via M-Pesa STK push.
-                  </div>
+              <div className="mt-3 rounded-2xl border border-slate-200 bg-white p-3 dark:border-white/10 dark:bg-white/[0.03]">
+                <div className="flex items-center justify-between text-xs text-muted">
+                  <span>Vote from</span>
+                  <span className="rounded-full bg-brand-500/15 px-2 py-0.5 font-semibold text-brand-700 dark:text-brand-300">
+                    KES {campaign.votePriceKes}
+                  </span>
+                </div>
+                <div className="mt-1 text-sm text-strong">
+                  Paid instantly via M-Pesa STK push.
                 </div>
               </div>
 
