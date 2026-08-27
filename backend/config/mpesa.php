@@ -9,6 +9,8 @@ return [
     'passkey' => env('MPESA_PASSKEY'),
     'callback_url' => env('MPESA_CALLBACK_URL'),
     'account_ref' => env('MPESA_ACCOUNT_REF', 'KochAwards'),
+    // Paybill: CustomerPayBillOnline. Buy Goods (Till): CustomerBuyGoodsOnline
+    'transaction_type' => env('MPESA_TRANSACTION_TYPE', 'CustomerPayBillOnline'),
 
     'urls' => [
         'sandbox' => [

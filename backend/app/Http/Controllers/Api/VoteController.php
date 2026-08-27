@@ -7,6 +7,8 @@ use App\Http\Requests\InitiateVoteRequest;
 use App\Http\Resources\VoteResource;
 use App\Models\Nominee;
 use App\Models\Vote;
+use App\Services\Exceptions\MpesaConfigurationException;
+use App\Services\Exceptions\MpesaRequestException;
 use App\Services\MpesaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -40,7 +42,6 @@ class VoteController extends Controller
             'status' => 'pending',
         ]);
 
-        // If M-Pesa isn't configured (e.g. sandbox without creds), simulate a successful STK push
         try {
             $response = $this->mpesa->stkPush(
                 phone: $phone,
@@ -55,22 +56,43 @@ class VoteController extends Controller
                 'mpesa_response' => json_encode($response),
             ]);
 
-            $simulated = false;
-        } catch (\Throwable $e) {
+            return response()->json([
+                'data' => new VoteResource($vote),
+                'message' => 'STK push sent to your phone. Enter your M-Pesa PIN to confirm.',
+            ], 201);
+        } catch (MpesaConfigurationException $e) {
+            // Only auto-simulate outside production so devs can work without Daraja creds.
+            if (app()->isProduction()) {
+                Log::error('M-Pesa not configured in production', ['err' => $e->getMessage()]);
+                $vote->update(['status' => 'failed', 'mpesa_response' => json_encode(['error' => $e->getMessage()])]);
+                return response()->json([
+                    'message' => 'Payment service is temporarily unavailable. Please try again shortly.',
+                ], 503);
+            }
+
             Log::warning('M-Pesa not configured — simulating STK', ['err' => $e->getMessage()]);
             $vote->update([
                 'mpesa_checkout_request_id' => 'sim-' . $vote->id,
                 'mpesa_response' => json_encode(['simulated' => true, 'error' => $e->getMessage()]),
             ]);
-            $simulated = true;
+            return response()->json([
+                'data' => new VoteResource($vote),
+                'message' => 'STK push simulated (M-Pesa credentials not configured). Poll /api/votes/{id}/status.',
+            ], 201);
+        } catch (MpesaRequestException $e) {
+            Log::error('M-Pesa STK push failed', [
+                'err' => $e->getMessage(),
+                'response' => $e->response,
+                'vote_id' => $vote->id,
+            ]);
+            $vote->update([
+                'status' => 'failed',
+                'mpesa_response' => json_encode(['error' => $e->getMessage(), 'body' => $e->response]),
+            ]);
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 502);
         }
-
-        return response()->json([
-            'data' => new VoteResource($vote),
-            'message' => $simulated
-                ? 'STK push simulated (M-Pesa credentials not configured). Poll /api/votes/{id}/status.'
-                : 'STK push sent to your phone. Enter your M-Pesa PIN to confirm.',
-        ], 201);
     }
 
     /** GET /api/votes/{vote}/status — poll for completion (used by the vote modal) */
@@ -95,6 +117,11 @@ class VoteController extends Controller
         $vote = Vote::where('mpesa_checkout_request_id', $checkoutRequestId)->first();
         if (!$vote) {
             return response()->json(['ResultCode' => 0, 'ResultDesc' => 'Vote not found — ignored']);
+        }
+
+        // Idempotency: once we've already recorded success, don't double-count.
+        if ($vote->status === 'success') {
+            return response()->json(['ResultCode' => 0, 'ResultDesc' => 'Already processed']);
         }
 
         if ($resultCode === 0) {
