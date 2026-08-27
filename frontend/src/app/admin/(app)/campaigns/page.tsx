@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Plus, Pencil, Users, Calendar, CheckCircle2, Loader2, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Users, Calendar, CheckCircle2, Loader2, Trash2, QrCode } from 'lucide-react';
 import { AdminTopBar } from '@/components/admin/AdminTopBar';
+import { CampaignQRModal } from '@/components/admin/CampaignQRModal';
 import type { Campaign } from '@/lib/types';
 import { adminApi } from '@/lib/api';
 import { formatDate, formatNumber } from '@/lib/utils';
@@ -19,6 +20,7 @@ export default function AdminCampaignsPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [qrCampaign, setQrCampaign] = useState<Campaign | null>(null);
 
   const load = () => {
     setLoading(true);
@@ -99,6 +101,14 @@ export default function AdminCampaignsPage() {
                     <div className="mt-0.5 line-clamp-1 text-xs text-muted">{c.tagline}</div>
                   </div>
                   <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setQrCampaign(c)}
+                      className="btn-ghost !py-1.5 !text-xs"
+                      aria-label="Generate QR code"
+                    >
+                      <QrCode className="h-3.5 w-3.5" />
+                      QR
+                    </button>
                     <Link
                       href={`/admin/campaigns/${c.slug}/edit`}
                       className="btn-ghost !py-1.5 !text-xs"
@@ -163,6 +173,8 @@ export default function AdminCampaignsPage() {
           </div>
         )}
       </div>
+
+      <CampaignQRModal campaign={qrCampaign} onClose={() => setQrCampaign(null)} />
     </>
   );
 }
