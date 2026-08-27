@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import {
   X,
   Smartphone,
@@ -26,6 +27,7 @@ const VOTE_PRICE_KES = 20;
 const PRESETS = [20, 60, 100, 500, 1000];
 
 export function VoteModal({ nominee, open, onClose }: Props) {
+  const router = useRouter();
   const [step, setStep] = useState<Step>('amount');
   const [amount, setAmount] = useState<number>(VOTE_PRICE_KES);
   const [custom, setCustom] = useState<string>('');
@@ -35,6 +37,15 @@ export function VoteModal({ nominee, open, onClose }: Props) {
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const votes = Math.max(1, Math.floor(amount / VOTE_PRICE_KES));
+
+  // Accepts "0712345678", "712345678", or with spaces; returns the 9-digit
+  // subscriber part (starts with 7 or 1). Empty string if not yet valid.
+  const localMsisdn = useMemo(() => {
+    const digits = phone.replace(/\D/g, '');
+    const stripped = digits.startsWith('0') ? digits.slice(1) : digits;
+    return stripped.length === 9 && /^[17]/.test(stripped) ? stripped : '';
+  }, [phone]);
+  const phoneValid = localMsisdn.length === 9;
 
   useEffect(() => {
     if (!open) {
@@ -57,7 +68,7 @@ export function VoteModal({ nominee, open, onClose }: Props) {
     try {
       const res = await voteApi.initiate({
         nominee_id: Number(nominee.id),
-        phone: `254${phone}`,
+        phone: `254${localMsisdn}`,
         amount,
       });
       const id = res.data.id;
@@ -70,6 +81,7 @@ export function VoteModal({ nominee, open, onClose }: Props) {
           try {
             await voteApi.simulate(id);
             setStep('success');
+            router.refresh();
           } catch {
             setStep('failed');
             setError('Simulation failed');
@@ -86,6 +98,7 @@ export function VoteModal({ nominee, open, onClose }: Props) {
           if (st === 'success') {
             if (pollRef.current) clearInterval(pollRef.current);
             setStep('success');
+            router.refresh();
           } else if (st === 'failed' || st === 'cancelled') {
             if (pollRef.current) clearInterval(pollRef.current);
             setStep('failed');
@@ -242,8 +255,8 @@ export function VoteModal({ nominee, open, onClose }: Props) {
                     type="tel"
                     inputMode="tel"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 9))}
-                    placeholder="712 345 678"
+                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                    placeholder="0712 345 678 or 712 345 678"
                     className="w-full bg-transparent px-4 py-3 text-lg text-strong outline-none placeholder:text-slate-400 dark:placeholder:text-white/30"
                   />
                 </div>
@@ -266,7 +279,7 @@ export function VoteModal({ nominee, open, onClose }: Props) {
                   Back
                 </button>
                 <button
-                  disabled={phone.length < 9}
+                  disabled={!phoneValid}
                   onClick={initiate}
                   className="btn-primary flex-1 disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -286,8 +299,9 @@ export function VoteModal({ nominee, open, onClose }: Props) {
               </div>
               <div className="heading-display text-xl text-strong">Check your phone</div>
               <p className="max-w-sm text-sm text-muted">
-                An M-Pesa prompt has been sent to <b className="text-strong">+254{phone}</b>. Enter
-                your PIN to confirm {formatKes(amount)}.
+                An M-Pesa prompt has been sent to{' '}
+                <b className="text-strong">+254{localMsisdn}</b>. Enter your PIN to confirm{' '}
+                {formatKes(amount)}.
               </p>
               {statusMessage && (
                 <p className="max-w-sm text-[11px] text-faint">{statusMessage}</p>
