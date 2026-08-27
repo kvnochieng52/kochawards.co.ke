@@ -16,7 +16,7 @@ class InitiateVoteRequest extends FormRequest
         return [
             'nominee_id' => ['required', 'integer', 'exists:nominees,id'],
             'phone' => ['required', 'string', 'regex:/^(\+?254|0)[17]\d{8}$/'],
-            'amount' => ['required', 'integer', 'min:10', 'max:150000'],
+            'amount' => ['required', 'integer', 'min:20', 'max:150000'],
         ];
     }
 

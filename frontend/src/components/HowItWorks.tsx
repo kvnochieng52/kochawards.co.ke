@@ -9,7 +9,7 @@ const steps = [
   {
     icon: Smartphone,
     title: 'Pay via M-Pesa',
-    text: 'One vote = KES 10. Enter your number, approve the STK push, done in seconds.',
+    text: 'One vote = KES 20. Enter your number, approve the STK push, done in seconds.',
   },
   {
     icon: Trophy,

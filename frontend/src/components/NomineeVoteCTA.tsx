@@ -16,7 +16,7 @@ export function NomineeVoteCTA({ nominee }: { nominee: Nominee }) {
         <div className="heading-display mt-1 text-5xl text-strong tabular-nums">
           {formatNumber(nominee.votes)}
         </div>
-        <div className="mt-1 text-sm text-muted">Every vote is KES 10 via M-Pesa.</div>
+        <div className="mt-1 text-sm text-muted">Every vote is KES 20 via M-Pesa.</div>
 
         <button onClick={() => setOpen(true)} className="btn-primary mt-6 w-full text-base">
           <Vote className="h-5 w-5" />

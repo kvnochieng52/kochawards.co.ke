@@ -2,12 +2,16 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Search, Menu, Zap } from 'lucide-react';
 import { useState } from 'react';
 import { ThemeToggle } from './ThemeToggle';
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  // Only show "Vote now" on a campaign detail page (/campaigns/[slug])
+  const showVoteNow = pathname?.startsWith('/campaigns/');
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 backdrop-blur-xl dark:border-white/5 dark:bg-ink-950/70">
       <div className="container-x flex h-16 items-center justify-between gap-4">
@@ -56,10 +60,12 @@ export function Header() {
             Search
           </button>
           <ThemeToggle />
-          <Link href="/#live" className="btn-primary">
-            <Zap className="h-4 w-4" />
-            Vote now
-          </Link>
+          {showVoteNow && (
+            <Link href="#live" className="btn-primary">
+              <Zap className="h-4 w-4" />
+              Vote now
+            </Link>
+          )}
           <button
             className="rounded-full border border-slate-200 bg-white p-2 text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-white/80 md:hidden"
             onClick={() => setOpen((v) => !v)}

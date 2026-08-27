@@ -109,7 +109,7 @@ export function NomineeRowCard({ nominee, rank, leaderVotes, closed }: Props) {
               className="btn-primary shrink-0 !px-4 !py-2 !text-xs md:!text-sm"
             >
               <Vote className="h-4 w-4" />
-              <span className="hidden sm:inline">Vote</span>
+              Vote
             </button>
           )}
         </div>

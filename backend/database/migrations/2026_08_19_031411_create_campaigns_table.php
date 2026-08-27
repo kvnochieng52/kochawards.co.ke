@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('location')->nullable();
             $table->dateTime('start_date');
             $table->dateTime('end_date');
-            $table->unsignedInteger('vote_price_kes')->default(10);
+            $table->unsignedInteger('vote_price_kes')->default(20);
             $table->enum('status', ['upcoming', 'live', 'ended'])->default('upcoming');
             $table->boolean('featured')->default(false);
             $table->text('prize')->nullable();

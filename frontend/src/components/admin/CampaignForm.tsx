@@ -122,7 +122,7 @@ export function CampaignForm({ initial, mode }: Props) {
     location: initial?.location ?? 'Nationwide',
     startDate: initial?.startDate ?? '',
     endDate: initial?.endDate ?? '',
-    votePriceKes: initial?.votePriceKes ?? 10,
+    votePriceKes: initial?.votePriceKes ?? 20,
     status: initial?.status ?? 'upcoming',
     featured: initial?.featured ?? false,
     prize: initial?.prize ?? '',
@@ -192,7 +192,7 @@ export function CampaignForm({ initial, mode }: Props) {
       location: data.location || undefined,
       start_date: data.startDate,
       end_date: data.endDate,
-      vote_price_kes: Number(data.votePriceKes ?? 10),
+      vote_price_kes: Number(data.votePriceKes ?? 20),
       status: data.status,
       featured: !!data.featured,
       prize: data.prize || undefined,
@@ -443,7 +443,7 @@ export function CampaignForm({ initial, mode }: Props) {
                 required
                 type="number"
                 min={1}
-                value={data.votePriceKes ?? 10}
+                value={data.votePriceKes ?? 20}
                 onChange={(e) => set('votePriceKes', Number(e.target.value))}
                 className="w-full bg-transparent px-3 py-2.5 text-sm text-strong outline-none"
               />

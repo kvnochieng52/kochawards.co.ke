@@ -22,23 +22,24 @@ interface Props {
   onClose: () => void;
 }
 
-const PRESETS = [10, 50, 100, 500, 1000];
+const VOTE_PRICE_KES = 20;
+const PRESETS = [20, 60, 100, 500, 1000];
 
 export function VoteModal({ nominee, open, onClose }: Props) {
   const [step, setStep] = useState<Step>('amount');
-  const [amount, setAmount] = useState<number>(10);
+  const [amount, setAmount] = useState<number>(VOTE_PRICE_KES);
   const [custom, setCustom] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
   const [statusMessage, setStatusMessage] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const votes = Math.max(1, Math.floor(amount / 10));
+  const votes = Math.max(1, Math.floor(amount / VOTE_PRICE_KES));
 
   useEffect(() => {
     if (!open) {
       setStep('amount');
-      setAmount(10);
+      setAmount(VOTE_PRICE_KES);
       setCustom('');
       setPhone('');
       setStatusMessage('');
@@ -182,8 +183,8 @@ export function VoteModal({ nominee, open, onClose }: Props) {
                 <input
                   type="number"
                   inputMode="numeric"
-                  min={10}
-                  step={10}
+                  min={VOTE_PRICE_KES}
+                  step={VOTE_PRICE_KES}
                   value={custom}
                   onChange={(e) => {
                     setCustom(e.target.value);
@@ -203,7 +204,7 @@ export function VoteModal({ nominee, open, onClose }: Props) {
                   </span>
                 </div>
                 <div className="mt-1 flex items-center justify-between text-xs text-faint">
-                  <span>KES 10 per vote</span>
+                  <span>KES {VOTE_PRICE_KES} per vote</span>
                   <span>
                     ={' '}
                     <span className="font-semibold text-strong">
@@ -214,7 +215,7 @@ export function VoteModal({ nominee, open, onClose }: Props) {
               </div>
 
               <button
-                disabled={amount < 10}
+                disabled={amount < VOTE_PRICE_KES}
                 onClick={() => setStep('phone')}
                 className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
               >
