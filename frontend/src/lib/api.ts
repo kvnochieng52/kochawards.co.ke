@@ -155,6 +155,8 @@ export const adminApi = {
       (r) => r.data
     );
   },
+  getNominee: (id: number | string) =>
+    api<Wrapped<Nominee>>(`/admin/nominees/${id}`, { auth: true }).then((r) => r.data),
   createNominee: (payload: Record<string, any>) =>
     api<Wrapped<Nominee>>('/admin/nominees', {
       method: 'POST',

@@ -6,7 +6,7 @@ import { Loader2 } from 'lucide-react';
 import { AdminTopBar } from '@/components/admin/AdminTopBar';
 import { NomineeForm } from '@/components/admin/NomineeForm';
 import type { Nominee } from '@/lib/types';
-import { ApiError, publicApi } from '@/lib/api';
+import { ApiError, adminApi } from '@/lib/api';
 
 export default function EditNomineePage() {
   const params = useParams<{ id: string }>();
@@ -14,8 +14,8 @@ export default function EditNomineePage() {
   const [state, setState] = useState<'loading' | 'ready' | 'notfound'>('loading');
 
   useEffect(() => {
-    publicApi
-      .nominee(params.id)
+    adminApi
+      .getNominee(params.id)
       .then((n) => {
         setNominee(n);
         setState('ready');
