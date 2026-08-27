@@ -87,6 +87,40 @@ interface Wrapped<T> {
   data: T;
 }
 
+export interface SearchCampaignHit {
+  id: string;
+  slug: string;
+  title: string;
+  tagline: string | null;
+  category: string | null;
+  location: string | null;
+  status: 'live' | 'upcoming' | 'ended';
+  featuredImage: string | null;
+}
+
+export interface SearchNomineeHit {
+  id: string;
+  slug: string;
+  code: string;
+  fullName: string;
+  photo: string | null;
+  category: string | null;
+  location: string | null;
+  votes: number;
+  campaign: {
+    id: string;
+    slug: string;
+    title: string;
+    status: 'live' | 'upcoming' | 'ended';
+  } | null;
+}
+
+export interface SearchResponse {
+  query: string;
+  campaigns: SearchCampaignHit[];
+  nominees: SearchNomineeHit[];
+}
+
 export const publicApi = {
   campaigns: () =>
     api<Wrapped<Campaign[]>>('/campaigns').then((r) => r.data),
@@ -98,6 +132,11 @@ export const publicApi = {
     api<Wrapped<Nominee>>(`/nominees/${id}`).then((r) => r.data),
   trending: (limit = 6) =>
     api<Wrapped<Nominee[]>>(`/nominees/trending?limit=${limit}`).then((r) => r.data),
+  search: (q: string, opts: { signal?: AbortSignal; limit?: number } = {}) =>
+    api<SearchResponse>(
+      `/search?q=${encodeURIComponent(q)}${opts.limit ? `&limit=${opts.limit}` : ''}`,
+      { signal: opts.signal }
+    ),
 };
 
 export const authApi = {

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\CampaignController;
 use App\Http\Controllers\Api\NomineeController;
+use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\VoteController;
 use App\Http\Controllers\Api\Admin\AdminCampaignController;
 use App\Http\Controllers\Api\Admin\AdminNomineeController;
@@ -23,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 // Public content
+Route::get('/search', SearchController::class);
 Route::get('/campaigns', [CampaignController::class, 'index']);
 Route::get('/campaigns/{campaign:slug}', [CampaignController::class, 'show']);
 Route::get('/campaigns/{campaign:slug}/nominees', [CampaignController::class, 'nominees']);
