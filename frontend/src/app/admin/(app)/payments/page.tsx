@@ -177,12 +177,12 @@ export default function PaymentsPage() {
                               className="flex items-center gap-2.5 hover:text-brand-700 dark:hover:text-brand-300"
                             >
                               {p.nominee.photo && (
-                                <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg ring-1 ring-slate-200 dark:ring-white/10">
+                                <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-slate-100 ring-1 ring-slate-200 dark:bg-white/5 dark:ring-white/10">
                                   <Image
                                     src={p.nominee.photo}
                                     alt={p.nominee.fullName}
                                     fill
-                                    className="object-cover"
+                                    className="object-contain"
                                   />
                                 </div>
                               )}

@@ -129,7 +129,7 @@ export function VoteModal({ nominee, open, onClose }: Props) {
                   src={nominee.photo}
                   alt={nominee.fullName}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                 />
               ) : (
                 <span className="text-lg font-semibold text-muted">

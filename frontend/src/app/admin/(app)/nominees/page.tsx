@@ -143,12 +143,12 @@ export default function AdminNomineesPage() {
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
                             {n.photo && (
-                              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg ring-1 ring-slate-200 dark:ring-white/10">
+                              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-slate-100 ring-1 ring-slate-200 dark:bg-white/5 dark:ring-white/10">
                                 <Image
                                   src={n.photo}
                                   alt={n.fullName}
                                   fill
-                                  className="object-cover"
+                                  className="object-contain"
                                 />
                               </div>
                             )}

@@ -50,7 +50,7 @@ export function NomineeRowCard({ nominee, rank, leaderVotes, closed }: Props) {
                 src={nominee.photo}
                 alt={nominee.fullName}
                 fill
-                className={`object-cover ${closed ? 'grayscale-[40%]' : ''}`}
+                className={`object-contain ${closed ? 'grayscale-[40%]' : ''}`}
               />
             ) : (
               <span className="text-sm font-semibold text-muted">

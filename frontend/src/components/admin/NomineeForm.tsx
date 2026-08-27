@@ -286,7 +286,7 @@ export function NomineeForm({ initial, mode }: Props) {
             >
               {displayPhoto ? (
                 <>
-                  <Image src={displayPhoto} alt="Preview" fill className="object-cover" />
+                  <Image src={displayPhoto} alt="Preview" fill className="object-contain" />
                   <div className="absolute inset-0 flex items-center justify-center bg-slate-900/60 opacity-0 transition group-hover:opacity-100">
                     <span className="text-xs font-semibold text-white">Replace photo</span>
                   </div>

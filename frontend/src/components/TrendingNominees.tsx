@@ -33,7 +33,7 @@ export async function TrendingNominees() {
             </div>
             <div className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-slate-100 ring-2 ring-slate-200 dark:bg-white/5 dark:ring-white/10">
               {n.photo ? (
-                <Image src={n.photo} alt={n.fullName} fill className="object-cover" />
+                <Image src={n.photo} alt={n.fullName} fill className="object-contain" />
               ) : (
                 <span className="text-sm font-semibold text-muted">
                   {n.fullName

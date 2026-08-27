@@ -126,7 +126,7 @@ export default async function NomineePage({ params }: Params) {
               <div className="flex flex-col gap-6 md:flex-row md:items-end">
                 <div className="relative flex h-40 w-40 shrink-0 items-center justify-center overflow-hidden rounded-3xl bg-slate-100 ring-4 ring-slate-100 dark:bg-white/5 dark:ring-white/10">
                   {n.photo ? (
-                    <Image src={n.photo} alt={n.fullName} fill className="object-cover" />
+                    <Image src={n.photo} alt={n.fullName} fill className="object-contain" />
                   ) : (
                     <span className="heading-display text-3xl text-muted">
                       {n.fullName
@@ -292,13 +292,13 @@ export default async function NomineePage({ params }: Params) {
                       href={`/nominees/${o.slug ?? o.id}`}
                       className="card group p-4 transition hover:-translate-y-0.5 hover:border-slate-300 dark:hover:border-white/20"
                     >
-                      <div className="relative flex h-32 items-center justify-center overflow-hidden rounded-2xl bg-slate-100 dark:bg-white/5">
+                      <div className="relative flex h-44 items-center justify-center overflow-hidden rounded-2xl bg-slate-100 dark:bg-white/5">
                         {o.photo ? (
                           <Image
                             src={o.photo}
                             alt={o.fullName}
                             fill
-                            className="object-cover transition group-hover:scale-105"
+                            className="object-contain transition group-hover:scale-[1.03]"
                           />
                         ) : (
                           <span className="heading-display text-xl text-muted">

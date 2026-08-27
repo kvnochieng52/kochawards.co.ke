@@ -204,7 +204,7 @@ export default function AdminDashboard() {
                     </div>
                     {n.photo && (
                       <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg">
-                        <Image src={n.photo} alt={n.fullName} fill className="object-cover" />
+                        <Image src={n.photo} alt={n.fullName} fill className="object-contain" />
                       </div>
                     )}
                     <div className="min-w-0 flex-1">
