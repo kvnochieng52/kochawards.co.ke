@@ -31,10 +31,12 @@ export function VoteModal({ nominee, open, onClose }: Props) {
   const [step, setStep] = useState<Step>('amount');
   const [amount, setAmount] = useState<number>(VOTE_PRICE_KES);
   const [custom, setCustom] = useState<string>('');
+  const [useCustom, setUseCustom] = useState<boolean>(false);
   const [phone, setPhone] = useState<string>('');
   const [statusMessage, setStatusMessage] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const customInputRef = useRef<HTMLInputElement | null>(null);
 
   const votes = Math.max(1, Math.floor(amount / VOTE_PRICE_KES));
 
@@ -52,6 +54,7 @@ export function VoteModal({ nominee, open, onClose }: Props) {
       setStep('amount');
       setAmount(VOTE_PRICE_KES);
       setCustom('');
+      setUseCustom(false);
       setPhone('');
       setStatusMessage('');
       setError(null);
@@ -169,45 +172,66 @@ export function VoteModal({ nominee, open, onClose }: Props) {
                 <div className="mb-2 text-xs font-semibold uppercase tracking-widest text-faint">
                   Choose amount
                 </div>
-                <div className="grid grid-cols-5 gap-2">
-                  {PRESETS.map((v) => (
-                    <button
-                      key={v}
-                      onClick={() => {
-                        setAmount(v);
-                        setCustom('');
-                      }}
-                      className={`rounded-2xl border px-2 py-3 text-sm font-semibold transition ${
-                        amount === v && !custom
-                          ? 'border-brand-500/70 bg-brand-500/10 text-brand-700 dark:text-brand-200'
-                          : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 dark:border-white/10 dark:bg-white/[0.03] dark:text-white/80 dark:hover:border-white/25'
-                      }`}
-                    >
-                      {v}
-                    </button>
-                  ))}
+                <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+                  {PRESETS.map((v) => {
+                    const selected = !useCustom && amount === v;
+                    return (
+                      <button
+                        key={v}
+                        onClick={() => {
+                          setUseCustom(false);
+                          setCustom('');
+                          setAmount(v);
+                        }}
+                        className={`rounded-2xl border px-2 py-3 text-sm font-semibold transition ${
+                          selected
+                            ? 'border-brand-500/70 bg-brand-500/10 text-brand-700 dark:text-brand-200'
+                            : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 dark:border-white/10 dark:bg-white/[0.03] dark:text-white/80 dark:hover:border-white/25'
+                        }`}
+                      >
+                        {v}
+                      </button>
+                    );
+                  })}
+                  <button
+                    onClick={() => {
+                      setUseCustom(true);
+                      setAmount(custom ? parseInt(custom, 10) || 0 : 0);
+                      setTimeout(() => customInputRef.current?.focus(), 0);
+                    }}
+                    className={`rounded-2xl border px-2 py-3 text-sm font-semibold transition ${
+                      useCustom
+                        ? 'border-brand-500/70 bg-brand-500/10 text-brand-700 dark:text-brand-200'
+                        : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 dark:border-white/10 dark:bg-white/[0.03] dark:text-white/80 dark:hover:border-white/25'
+                    }`}
+                  >
+                    Custom
+                  </button>
                 </div>
               </div>
 
-              <div>
-                <label className="mb-2 block text-xs font-semibold uppercase tracking-widest text-faint">
-                  Or custom amount (KES)
-                </label>
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  min={VOTE_PRICE_KES}
-                  step={VOTE_PRICE_KES}
-                  value={custom}
-                  onChange={(e) => {
-                    setCustom(e.target.value);
-                    const n = parseInt(e.target.value || '0', 10);
-                    if (!Number.isNaN(n) && n > 0) setAmount(n);
-                  }}
-                  placeholder="e.g. 250"
-                  className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-lg text-strong outline-none placeholder:text-slate-400 focus:border-brand-500/60 dark:border-white/10 dark:bg-white/[0.03] dark:placeholder:text-white/30"
-                />
-              </div>
+              {useCustom && (
+                <div>
+                  <label className="mb-2 block text-xs font-semibold uppercase tracking-widest text-faint">
+                    Custom amount (KES)
+                  </label>
+                  <input
+                    ref={customInputRef}
+                    type="number"
+                    inputMode="numeric"
+                    min={VOTE_PRICE_KES}
+                    step={VOTE_PRICE_KES}
+                    value={custom}
+                    onChange={(e) => {
+                      setCustom(e.target.value);
+                      const n = parseInt(e.target.value || '0', 10);
+                      setAmount(Number.isNaN(n) ? 0 : n);
+                    }}
+                    placeholder="e.g. 250"
+                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-lg text-strong outline-none placeholder:text-slate-400 focus:border-brand-500/60 dark:border-white/10 dark:bg-white/[0.03] dark:placeholder:text-white/30"
+                  />
+                </div>
+              )}
 
               <div className="rounded-2xl border border-brand-500/30 bg-brand-500/[0.08] p-4">
                 <div className="flex items-center justify-between text-sm text-muted">
