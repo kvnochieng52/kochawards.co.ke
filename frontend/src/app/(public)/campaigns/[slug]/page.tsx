@@ -29,25 +29,12 @@ export default async function CampaignPage({ params }: Params) {
 
   return (
     <div>
-      {/* Poster + title header — poster shown clean, title lives below */}
       <div className="container-x pt-6">
         <Link href="/" className="link-back mb-4 w-fit">
           <ArrowLeft className="h-4 w-4" /> All campaigns
         </Link>
 
-        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-3xl border border-slate-200 bg-slate-100 dark:border-white/10 dark:bg-white/[0.03] md:aspect-[16/6]">
-          {c.featuredImage && (
-            <Image
-              src={c.featuredImage}
-              alt={c.title}
-              fill
-              priority
-              className={`object-contain ${closed ? 'grayscale-[35%]' : ''}`}
-            />
-          )}
-        </div>
-
-        <div className="mt-5">
+        <div>
           <div className="mb-3 flex flex-wrap items-center gap-2">
             {closed ? (
               <span className="inline-flex items-center gap-1.5 rounded-full border border-brand-500/40 bg-brand-500/10 px-3 py-1 text-xs font-semibold uppercase text-brand-700 dark:text-brand-300">
@@ -75,6 +62,19 @@ export default async function CampaignPage({ params }: Params) {
       <div className="container-x mt-8">
         <div className="grid gap-6 md:grid-cols-[320px_1fr] lg:grid-cols-[360px_1fr]">
           <aside className="space-y-3 md:sticky md:top-20 md:self-start">
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 dark:border-white/10 dark:bg-white/[0.03]">
+              {c.featuredImage && (
+                <Image
+                  src={c.featuredImage}
+                  alt={c.title}
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 360px, (min-width: 768px) 320px, 100vw"
+                  className={`object-contain ${closed ? 'grayscale-[35%]' : ''}`}
+                />
+              )}
+            </div>
+
             {closed ? (
               <div className="rounded-2xl border border-brand-500/40 bg-brand-500/10 p-4 text-center">
                 <div className="inline-flex items-center gap-1.5 text-brand-700 dark:text-brand-300">
