@@ -45,8 +45,8 @@ class VoteController extends Controller
             $response = $this->mpesa->stkPush(
                 phone: $phone,
                 amount: $amount,
-                accountRef: config('mpesa.account_ref', 'Kura') . $nominee->code,
-                description: 'Kura vote'
+                accountRef: config('mpesa.account_ref', 'KochAwards') . $nominee->code,
+                description: 'Koch Award Vote'
             );
 
             $vote->update([

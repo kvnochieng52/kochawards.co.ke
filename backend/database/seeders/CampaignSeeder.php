@@ -17,7 +17,7 @@ class CampaignSeeder extends Seeder
                 'description' => 'From maternal clinics in Kibera to boreholes in Turkana, community workers keep Kenya standing. This year we’re handing the mic to the country — vote for the individual whose service moved you the most. 100% of the winner’s prize funds their next project.',
                 'featured_image' => 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1600&q=80',
                 'category' => 'Community',
-                'organizer' => 'Ministry of Public Service & Kura Foundation',
+                'organizer' => 'Ministry of Public Service & Koch Awards Foundation',
                 'location' => 'Nationwide',
                 'start_date' => '2026-07-01 00:00:00',
                 'end_date' => '2026-09-30 23:59:00',

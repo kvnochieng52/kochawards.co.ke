@@ -23,7 +23,7 @@ export function HowItWorks() {
     <section id="how" className="container-x mt-24">
       <div className="flex items-end justify-between gap-4">
         <div>
-          <div className="text-xs uppercase tracking-widest text-faint">How Kura works</div>
+          <div className="text-xs uppercase tracking-widest text-faint">How Koch Awards works</div>
           <h2 className="heading-display mt-2 text-3xl text-strong md:text-4xl">
             Three taps. One winner.
           </h2>

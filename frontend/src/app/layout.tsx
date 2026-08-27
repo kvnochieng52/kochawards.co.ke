@@ -6,7 +6,7 @@ const sans = Inter({ subsets: ['latin'], variable: '--font-sans' });
 const display = Space_Grotesk({ subsets: ['latin'], variable: '--font-display' });
 
 export const metadata: Metadata = {
-  title: 'Kura — Vote for the community workers that matter',
+  title: 'Koch Awards 2026 — Vote for the community workers that matter',
   description:
     'Kenya’s home for public voting on community workers, chamas and SACCOs. One vote, ten shillings, real impact.',
 };

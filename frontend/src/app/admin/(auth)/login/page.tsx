@@ -44,10 +44,15 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md">
         <div className="flex items-center justify-center gap-3">
           <div className="relative h-11 w-11 overflow-hidden rounded-xl bg-white ring-1 ring-slate-200 dark:ring-white/10">
-            <Image src="/logo.png" alt="Kura" fill className="object-contain p-0.5" />
+            <Image src="/logo.png" alt="Koch Awards" fill className="object-contain p-0.5" />
           </div>
           <div className="leading-tight">
-            <div className="heading-display text-xl text-strong">Kura</div>
+            <div className="heading-display flex items-baseline gap-1.5 text-xl text-strong">
+              Koch Awards
+              <span className="font-serif text-sm italic tracking-tight text-brand-600 dark:text-brand-400">
+                &lsquo;26
+              </span>
+            </div>
             <div className="text-[10px] font-semibold uppercase tracking-widest text-brand-700 dark:text-brand-300">
               Admin console
             </div>
@@ -147,7 +152,7 @@ export default function AdminLoginPage() {
         <div className="mt-4 text-center text-xs text-muted">
           Back to{' '}
           <Link href="/" className="font-semibold text-strong hover:underline">
-            Kura homepage
+            Koch Awards homepage
           </Link>
         </div>
       </div>

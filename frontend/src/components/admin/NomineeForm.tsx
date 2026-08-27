@@ -785,7 +785,7 @@ export function NomineeForm({ initial, mode }: Props) {
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-lg dark:border-white/10 dark:bg-ink-900">
           <div className="text-xs text-muted">
             {mode === 'create' ? 'Adding a new nominee.' : 'Editing existing nominee.'} Changes
-            are saved to Kura and immediately visible on the campaign leaderboard.
+            are saved to Koch Awards and immediately visible on the campaign leaderboard.
           </div>
           <div className="flex items-center gap-2">
             <button type="button" className="btn-ghost !py-2 !text-xs">

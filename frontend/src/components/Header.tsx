@@ -17,10 +17,15 @@ export function Header() {
       <div className="container-x flex h-16 items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-3">
           <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-white ring-1 ring-slate-200 dark:bg-white/95 dark:ring-white/30">
-            <Image src="/logo.png" alt="Kura" fill className="object-contain p-0.5" />
+            <Image src="/logo.png" alt="Koch Awards" fill className="object-contain p-0.5" />
           </div>
           <div className="leading-tight">
-            <div className="heading-display text-lg text-strong">Kura</div>
+            <div className="heading-display flex items-baseline gap-1.5 text-lg text-strong">
+              Koch Awards
+              <span className="font-serif text-sm italic tracking-tight text-brand-600 dark:text-brand-400">
+                &lsquo;26
+              </span>
+            </div>
             <div className="text-[10px] uppercase tracking-[0.18em] text-muted">
               Vote. Support. Uplift.
             </div>

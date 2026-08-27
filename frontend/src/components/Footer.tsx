@@ -9,17 +9,22 @@ export function Footer() {
         <div className="md:col-span-2">
           <div className="flex items-center gap-3">
             <div className="relative h-11 w-11 overflow-hidden rounded-xl bg-white ring-1 ring-slate-200 dark:bg-white/95 dark:ring-white/30">
-              <Image src="/logo.png" alt="Kura" fill className="object-contain p-0.5" />
+              <Image src="/logo.png" alt="Koch Awards" fill className="object-contain p-0.5" />
             </div>
             <div>
-              <div className="heading-display text-xl text-strong">Kura</div>
+              <div className="heading-display flex items-baseline gap-2 text-xl text-strong">
+                Koch Awards
+                <span className="font-serif text-base italic tracking-tight text-brand-600 dark:text-brand-400">
+                  2026
+                </span>
+              </div>
               <div className="text-xs uppercase tracking-widest text-muted">
                 Every vote is a story.
               </div>
             </div>
           </div>
           <p className="mt-5 max-w-md text-sm text-muted">
-            Kura is Kenya’s public voting platform for the community workers, teachers and
+            Koch Awards is Kenya’s public voting platform for the community workers, teachers and
             volunteers holding our neighborhoods together. Pay via M-Pesa, cast your vote, back
             the people doing the work.
           </p>
@@ -62,7 +67,7 @@ export function Footer() {
             Company
           </div>
           <ul className="mt-4 space-y-2 text-sm text-body">
-            <li>About Kura</li>
+            <li>About Koch Awards</li>
             <li>Host a campaign</li>
             <li>Trust &amp; Safety</li>
             <li>Contact</li>
@@ -71,7 +76,7 @@ export function Footer() {
       </div>
       <div className="border-t border-slate-200 dark:border-white/5">
         <div className="container-x flex flex-col items-center justify-between gap-3 py-5 text-xs text-faint md:flex-row">
-          <div>© {new Date().getFullYear()} Kura Voting Ltd. Nairobi, Kenya.</div>
+          <div>© {new Date().getFullYear()} Koch Awards. Nairobi, Kenya.</div>
           <div className="flex items-center gap-4">
             <span>Payments powered by M-Pesa</span>
             <span className="rounded-full bg-brand-500/10 px-3 py-1 text-brand-700 dark:text-brand-300">

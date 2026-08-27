@@ -13,7 +13,7 @@ class AdminSeeder extends Seeder
         User::updateOrCreate(
             ['email' => env('ADMIN_EMAIL', 'admin@kura.co.ke')],
             [
-                'name' => env('ADMIN_NAME', 'Kura Admin'),
+                'name' => env('ADMIN_NAME', 'Koch Awards Admin'),
                 'password' => Hash::make(env('ADMIN_PASSWORD', 'password')),
                 'is_admin' => true,
                 'email_verified_at' => now(),

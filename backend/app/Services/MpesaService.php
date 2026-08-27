@@ -39,7 +39,7 @@ class MpesaService
     }
 
     /** Trigger Lipa Na M-Pesa Online (STK Push) */
-    public function stkPush(string $phone, int $amount, string $accountRef, string $description = 'Kura vote'): array
+    public function stkPush(string $phone, int $amount, string $accountRef, string $description = 'Koch Award Vote'): array
     {
         $shortcode = config('mpesa.shortcode');
         $passkey = config('mpesa.passkey');

@@ -43,11 +43,11 @@ const socialMap = {
 };
 
 interface Params {
-  params: { id: string };
+  params: { slug: string };
 }
 
 export default async function NomineePage({ params }: Params) {
-  const n = await publicApi.nominee(params.id).catch(() => null);
+  const n = await publicApi.nominee(params.slug).catch(() => null);
   if (!n) return notFound();
   const campaign = (n as any).campaign as { id: string; slug: string; title: string; status: string } | undefined;
   const siblings = campaign
@@ -289,7 +289,7 @@ export default async function NomineePage({ params }: Params) {
                   {others.map((o) => (
                     <Link
                       key={o.id}
-                      href={`/nominees/${o.id}`}
+                      href={`/nominees/${o.slug ?? o.id}`}
                       className="card group p-4 transition hover:-translate-y-0.5 hover:border-slate-300 dark:hover:border-white/20"
                     >
                       <div className="relative flex h-32 items-center justify-center overflow-hidden rounded-2xl bg-slate-100 dark:bg-white/5">

@@ -74,10 +74,15 @@ export function AdminSidebar({ onClose }: Props) {
       <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 px-4 dark:border-white/5">
         <Link href="/admin" className="flex items-center gap-2.5">
           <div className="relative h-9 w-9 overflow-hidden rounded-xl bg-white ring-1 ring-slate-200 dark:ring-white/10">
-            <Image src="/logo.png" alt="Kura" fill className="object-contain p-0.5" />
+            <Image src="/logo.png" alt="Koch Awards" fill className="object-contain p-0.5" />
           </div>
           <div className="leading-tight">
-            <div className="heading-display text-sm text-strong">Kura</div>
+            <div className="heading-display flex items-baseline gap-1 text-sm text-strong">
+              Koch Awards
+              <span className="font-serif text-xs italic tracking-tight text-brand-600 dark:text-brand-400">
+                &lsquo;26
+              </span>
+            </div>
             <div className="text-[10px] font-semibold uppercase tracking-widest text-brand-700 dark:text-brand-300">
               Admin
             </div>

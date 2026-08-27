@@ -24,7 +24,7 @@ export async function TrendingNominees() {
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {top.map((n, i) => (
           <Link
-            href={`/nominees/${n.id}`}
+            href={`/nominees/${n.slug ?? n.id}`}
             key={n.id}
             className="card group flex items-center gap-4 p-4 transition hover:-translate-y-1 hover:border-slate-300 dark:hover:border-white/20"
           >

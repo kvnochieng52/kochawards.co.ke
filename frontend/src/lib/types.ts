@@ -33,6 +33,8 @@ export interface Campaign {
 
 export interface Nominee {
   id: string;
+  /** URL-safe slug — used for public nominee URLs */
+  slug?: string;
   campaignId: string;
   code: string;
   fullName: string;

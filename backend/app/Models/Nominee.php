@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Nominee extends Model
 {
@@ -14,6 +15,7 @@ class Nominee extends Model
     protected $fillable = [
         'campaign_id',
         'code',
+        'slug',
         'full_name',
         'photo',
         'cover_photo',
@@ -57,6 +59,25 @@ class Nominee extends Model
             'founded_year' => 'integer',
             'amount_mobilized_kes' => 'integer',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (Nominee $n) {
+            if (empty($n->slug)) {
+                $base = Str::slug($n->full_name ?? '') ?: 'nominee';
+                $slug = $base;
+                $i = 2;
+                while (
+                    self::where('slug', $slug)
+                        ->where('id', '!=', $n->id ?? 0)
+                        ->exists()
+                ) {
+                    $slug = $base . '-' . $i++;
+                }
+                $n->slug = $slug;
+            }
+        });
     }
 
     public function campaign(): BelongsTo

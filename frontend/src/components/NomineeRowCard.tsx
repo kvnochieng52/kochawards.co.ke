@@ -42,7 +42,7 @@ export function NomineeRowCard({ nominee, rank, leaderVotes, closed }: Props) {
           </div>
 
           <Link
-            href={`/nominees/${nominee.id}`}
+            href={`/nominees/${nominee.slug ?? nominee.id}`}
             className="relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-slate-100 ring-2 ring-slate-200 dark:bg-white/5 dark:ring-white/10"
           >
             {nominee.photo ? (
@@ -67,7 +67,7 @@ export function NomineeRowCard({ nominee, rank, leaderVotes, closed }: Props) {
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
               <Link
-                href={`/nominees/${nominee.id}`}
+                href={`/nominees/${nominee.slug ?? nominee.id}`}
                 className="truncate text-sm font-semibold text-strong hover:text-brand-700 dark:hover:text-brand-300 md:text-base"
               >
                 {nominee.fullName}

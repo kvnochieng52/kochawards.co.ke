@@ -114,7 +114,7 @@ export default async function HomePage() {
                 Past campaigns
               </h2>
               <p className="mt-1 max-w-lg text-sm text-muted">
-                A quick look at previous Kura campaigns and their winners.
+                A quick look at previous Koch Awards campaigns and their winners.
               </p>
             </div>
           </div>

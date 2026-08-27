@@ -28,7 +28,9 @@ Route::get('/campaigns/{campaign:slug}', [CampaignController::class, 'show']);
 Route::get('/campaigns/{campaign:slug}/nominees', [CampaignController::class, 'nominees']);
 
 Route::get('/nominees/trending', [NomineeController::class, 'trending']);
-Route::get('/nominees/{nominee}', [NomineeController::class, 'show']);
+// Public detail — bind by slug (pretty URL). Accepts the numeric id too as a fallback.
+Route::get('/nominees/{nominee:slug}', [NomineeController::class, 'show']);
+Route::get('/nominees/id/{nominee}', [NomineeController::class, 'show']);
 
 // Voting (public — no auth, guarded by M-Pesa)
 Route::post('/votes/initiate', [VoteController::class, 'initiate']);

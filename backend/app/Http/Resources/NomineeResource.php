@@ -11,6 +11,7 @@ class NomineeResource extends JsonResource
     {
         return [
             'id' => (string) $this->id,
+            'slug' => $this->slug,
             'campaignId' => (string) $this->campaign_id,
             'campaign' => $this->whenLoaded('campaign', fn () => [
                 'id' => (string) $this->campaign->id,
