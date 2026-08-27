@@ -121,7 +121,8 @@ export default async function NomineePage({ params }: Params) {
         )}
 
         <div className="grid gap-8 md:grid-cols-3">
-          <div className="md:col-span-2 space-y-8">
+          {/* Main info card — desktop: cols 1-2 row 1, mobile: 1st */}
+          <div className="order-1 md:col-span-2 md:col-start-1 md:row-start-1">
             <div className="glass rounded-[36px] p-6 md:p-8">
               <div className="flex flex-col gap-6 md:flex-row md:items-end">
                 <div className="relative flex h-40 w-40 shrink-0 items-center justify-center overflow-hidden rounded-3xl bg-slate-100 ring-4 ring-slate-100 dark:bg-white/5 dark:ring-white/10">
@@ -264,7 +265,15 @@ export default async function NomineePage({ params }: Params) {
                 </div>
               </div>
             </div>
+          </div>
 
+          {/* Vote CTA — desktop: col 3 row 1 (sticky), mobile: 2nd (right after main info) */}
+          <div className="order-2 md:col-start-3 md:row-start-1">
+            <NomineeVoteCTA nominee={n} />
+          </div>
+
+          {/* Other nominees — desktop: cols 1-2 row 2, mobile: 3rd (after Vote CTA) */}
+          <div className="order-3 md:col-span-2 md:col-start-1 md:row-start-2">
             {others.length > 0 && (
               <div>
                 <div className="mb-4 flex items-end justify-between">
@@ -328,10 +337,6 @@ export default async function NomineePage({ params }: Params) {
                 </div>
               </div>
             )}
-          </div>
-
-          <div>
-            <NomineeVoteCTA nominee={n} />
           </div>
         </div>
       </div>
