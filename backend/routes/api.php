@@ -48,5 +48,6 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::apiResource('nominees', AdminNomineeController::class);
 
     Route::get('/payments', [AdminPaymentController::class, 'index']);
+    Route::get('/payments/export', [AdminPaymentController::class, 'export']);
     Route::post('/uploads', [AdminUploadController::class, 'store']);
 });

@@ -3,7 +3,16 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { CheckCircle2, Clock, XCircle, Download, Loader2 } from 'lucide-react';
+import {
+  CheckCircle2,
+  Clock,
+  XCircle,
+  Download,
+  Loader2,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
 import { AdminTopBar } from '@/components/admin/AdminTopBar';
 import { adminApi } from '@/lib/api';
 import { formatKes } from '@/lib/utils';
@@ -55,24 +64,85 @@ interface Summary {
   failed: number;
 }
 
+interface Meta {
+  currentPage: number;
+  lastPage: number;
+  perPage: number;
+  total: number;
+  from: number | null;
+  to: number | null;
+}
+
+const PER_PAGE = 20;
+
 export default function PaymentsPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [summary, setSummary] = useState<Summary | null>(null);
+  const [meta, setMeta] = useState<Meta | null>(null);
+  const [message, setMessage] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState('');
   const [range, setRange] = useState('all');
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [exporting, setExporting] = useState(false);
+
+  // Debounce search input
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setSearch(searchInput.trim());
+      setPage(1);
+    }, 350);
+    return () => clearTimeout(t);
+  }, [searchInput]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [status, range]);
 
   useEffect(() => {
     setLoading(true);
     adminApi
-      .payments({ status: status || undefined, range })
+      .payments({
+        status: status || undefined,
+        range,
+        search: search || undefined,
+        page,
+        per_page: PER_PAGE,
+      })
       .then((r) => {
         setPayments(r.data ?? []);
         setSummary(r.summary ?? null);
+        setMeta(r.meta ?? null);
+        setMessage(r.message ?? '');
       })
-      .catch(() => {})
+      .catch(() => {
+        setMessage('Failed to load payments.');
+      })
       .finally(() => setLoading(false));
-  }, [status, range]);
+  }, [status, range, search, page]);
+
+  const lastPage = meta?.lastPage ?? 1;
+  const currentPage = meta?.currentPage ?? page;
+
+  const handleExport = async () => {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      await adminApi.paymentsExport({
+        status: status || undefined,
+        range,
+        search: search || undefined,
+      });
+      setMessage('Export downloaded.');
+    } catch {
+      setMessage('Failed to export payments.');
+    } finally {
+      setExporting(false);
+    }
+  };
 
   return (
     <>
@@ -80,9 +150,19 @@ export default function PaymentsPage() {
         title="Payments"
         breadcrumb={[{ label: 'Admin', href: '/admin' }, { label: 'Payments' }]}
         actions={
-          <button className="btn-ghost !py-2 !text-xs md:!text-sm">
-            <Download className="h-4 w-4" />
-            <span className="hidden sm:inline">Export</span>
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            className="btn-ghost !py-2 !text-xs disabled:cursor-not-allowed disabled:opacity-60 md:!text-sm"
+          >
+            {exporting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="h-4 w-4" />
+            )}
+            <span className="hidden sm:inline">
+              {exporting ? 'Exporting…' : 'Export CSV'}
+            </span>
           </button>
         }
       />
@@ -96,6 +176,15 @@ export default function PaymentsPage() {
         </div>
 
         <div className="mb-4 flex flex-wrap items-center gap-2">
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
+            <input
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Search receipt, phone, nominee…"
+              className="w-64 rounded-full border border-slate-200 bg-white py-2 pl-9 pr-4 text-sm text-strong outline-none focus:border-brand-500/60 dark:border-white/10 dark:bg-white/[0.03]"
+            />
+          </div>
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
@@ -117,9 +206,11 @@ export default function PaymentsPage() {
             <option value="30d">Last 30 days</option>
             <option value="all">All time</option>
           </select>
-          <div className="ml-auto text-xs text-muted">
-            {payments.length} {payments.length === 1 ? 'payment' : 'payments'}
-          </div>
+          {message && (
+            <div className="ml-auto text-xs text-muted" aria-live="polite">
+              {message}
+            </div>
+          )}
         </div>
 
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-white/5 dark:bg-ink-900">
@@ -226,6 +317,32 @@ export default function PaymentsPage() {
               </tbody>
             </table>
           </div>
+
+          {!loading && meta && meta.total > 0 && (
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 px-4 py-3 dark:border-white/5">
+              <div className="text-xs text-muted">
+                Page {currentPage} of {lastPage}
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage <= 1}
+                  className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-strong transition hover:border-brand-500/60 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/10 dark:bg-white/[0.03]"
+                >
+                  <ChevronLeft className="h-3.5 w-3.5" />
+                  Prev
+                </button>
+                <button
+                  onClick={() => setPage((p) => Math.min(lastPage, p + 1))}
+                  disabled={currentPage >= lastPage}
+                  className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-strong transition hover:border-brand-500/60 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/10 dark:bg-white/[0.03]"
+                >
+                  Next
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>

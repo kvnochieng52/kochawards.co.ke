@@ -211,11 +211,57 @@ export const adminApi = {
   deleteNominee: (id: number | string) =>
     api(`/admin/nominees/${id}`, { method: 'DELETE', auth: true }),
 
-  payments: (params: { status?: string; range?: string } = {}) => {
+  payments: (
+    params: {
+      status?: string;
+      range?: string;
+      search?: string;
+      page?: number;
+      per_page?: number;
+    } = {},
+  ) => {
     const qs = new URLSearchParams();
     if (params.status) qs.set('status', params.status);
     if (params.range) qs.set('range', params.range);
+    if (params.search) qs.set('search', params.search);
+    if (params.page) qs.set('page', String(params.page));
+    if (params.per_page) qs.set('per_page', String(params.per_page));
     return api<any>(`/admin/payments?${qs}`, { auth: true });
+  },
+
+  paymentsExport: async (
+    params: { status?: string; range?: string; search?: string } = {},
+  ) => {
+    const qs = new URLSearchParams();
+    if (params.status) qs.set('status', params.status);
+    if (params.range) qs.set('range', params.range);
+    if (params.search) qs.set('search', params.search);
+
+    const token = getToken();
+    const res = await fetch(`${API_URL}/admin/payments/export?${qs}`, {
+      headers: {
+        Accept: 'text/csv',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      cache: 'no-store',
+    });
+    if (!res.ok) {
+      throw new ApiError(res.status, `Export failed (${res.status})`);
+    }
+
+    const blob = await res.blob();
+    const disposition = res.headers.get('Content-Disposition') || '';
+    const match = disposition.match(/filename="?([^"]+)"?/i);
+    const filename = match?.[1] || `payments-${Date.now()}.csv`;
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
   },
 
   uploadImage: (file: File, kind: 'photo' | 'cover' | 'campaign' = 'photo') => {
