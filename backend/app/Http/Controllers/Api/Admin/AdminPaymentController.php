@@ -18,7 +18,7 @@ class AdminPaymentController extends Controller
         $perPage = (int) $request->query('per_page', 20);
         $perPage = max(1, min($perPage, 100));
 
-        $payments = $q->orderByDesc('created_at')->paginate($perPage)->withQueryString();
+        $payments = $q->with('nominee')->orderByDesc('created_at')->paginate($perPage)->withQueryString();
 
         $range = $request->query('range', 'today');
         $summary = [
