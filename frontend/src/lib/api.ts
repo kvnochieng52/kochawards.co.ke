@@ -81,6 +81,34 @@ export async function api<T = any>(path: string, opts: FetchOpts = {}): Promise<
   return json as T;
 }
 
+async function downloadCsv(path: string, defaultBaseName: string): Promise<void> {
+  const token = getToken();
+  const res = await fetch(`${API_URL}${path}`, {
+    headers: {
+      Accept: 'text/csv',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    cache: 'no-store',
+  });
+  if (!res.ok) {
+    throw new ApiError(res.status, `Export failed (${res.status})`);
+  }
+
+  const blob = await res.blob();
+  const disposition = res.headers.get('Content-Disposition') || '';
+  const match = disposition.match(/filename="?([^"]+)"?/i);
+  const filename = match?.[1] || `${defaultBaseName}-${Date.now()}.csv`;
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 /* -------------------- Typed shortcuts -------------------- */
 
 interface Wrapped<T> {
@@ -165,6 +193,49 @@ export const voteApi = {
     api<Wrapped<any>>(`/votes/${voteId}/simulate`, { method: 'POST' }),
 };
 
+export interface DonationRecord {
+  id: string;
+  program: string;
+  donorName: string | null;
+  phone: string;
+  amountKes: number;
+  status: 'pending' | 'success' | 'failed' | 'cancelled';
+  mpesaReceipt: string | null;
+  mpesaCheckoutRequestId: string | null;
+  paidAt: string | null;
+  createdAt: string | null;
+}
+
+export const donationApi = {
+  initiate: (payload: {
+    program?: string;
+    donor_name?: string;
+    phone: string;
+    amount: number;
+  }) =>
+    api<Wrapped<DonationRecord> & { message: string }>('/donations/initiate', {
+      method: 'POST',
+      body: payload,
+    }),
+  status: (id: number | string) =>
+    api<Wrapped<DonationRecord>>(`/donations/${id}/status`),
+};
+
+export const contactApi = {
+  send: (payload: {
+    name: string;
+    email: string;
+    phone?: string;
+    subject?: string;
+    message: string;
+    source?: string;
+  }) =>
+    api<{ message: string; data: { id: string } }>('/contact', {
+      method: 'POST',
+      body: payload,
+    }),
+};
+
 export const adminApi = {
   stats: () => api<any>('/admin/stats', { auth: true }),
 
@@ -236,32 +307,38 @@ export const adminApi = {
     if (params.status) qs.set('status', params.status);
     if (params.range) qs.set('range', params.range);
     if (params.search) qs.set('search', params.search);
+    await downloadCsv(`/admin/payments/export?${qs}`, 'payments');
+  },
 
-    const token = getToken();
-    const res = await fetch(`${API_URL}/admin/payments/export?${qs}`, {
-      headers: {
-        Accept: 'text/csv',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      cache: 'no-store',
-    });
-    if (!res.ok) {
-      throw new ApiError(res.status, `Export failed (${res.status})`);
-    }
+  donations: (
+    params: {
+      status?: string;
+      range?: string;
+      search?: string;
+      program?: string;
+      page?: number;
+      per_page?: number;
+    } = {},
+  ) => {
+    const qs = new URLSearchParams();
+    if (params.status) qs.set('status', params.status);
+    if (params.range) qs.set('range', params.range);
+    if (params.search) qs.set('search', params.search);
+    if (params.program) qs.set('program', params.program);
+    if (params.page) qs.set('page', String(params.page));
+    if (params.per_page) qs.set('per_page', String(params.per_page));
+    return api<any>(`/admin/donations?${qs}`, { auth: true });
+  },
 
-    const blob = await res.blob();
-    const disposition = res.headers.get('Content-Disposition') || '';
-    const match = disposition.match(/filename="?([^"]+)"?/i);
-    const filename = match?.[1] || `payments-${Date.now()}.csv`;
-
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+  donationsExport: async (
+    params: { status?: string; range?: string; search?: string; program?: string } = {},
+  ) => {
+    const qs = new URLSearchParams();
+    if (params.status) qs.set('status', params.status);
+    if (params.range) qs.set('range', params.range);
+    if (params.search) qs.set('search', params.search);
+    if (params.program) qs.set('program', params.program);
+    await downloadCsv(`/admin/donations/export?${qs}`, 'donations');
   },
 
   uploadImage: (file: File, kind: 'photo' | 'cover' | 'campaign' = 'photo') => {

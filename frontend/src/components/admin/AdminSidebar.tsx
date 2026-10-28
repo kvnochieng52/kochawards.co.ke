@@ -8,6 +8,7 @@ import {
   Trophy,
   Users,
   Wallet,
+  Heart,
   BarChart3,
   Settings,
   LogOut,
@@ -22,6 +23,7 @@ const nav = [
   { href: '/admin/campaigns', label: 'Campaigns', icon: Trophy },
   { href: '/admin/nominees', label: 'Nominees', icon: Users },
   { href: '/admin/payments', label: 'Payments', icon: Wallet, badge: 'M-Pesa' },
+  { href: '/admin/donations', label: 'Donations', icon: Heart, badge: 'BOMA BORA' },
   { href: '/admin/reports', label: 'Reports', icon: BarChart3 },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];

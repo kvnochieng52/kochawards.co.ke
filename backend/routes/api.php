@@ -2,10 +2,13 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\CampaignController;
+use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\DonationController;
 use App\Http\Controllers\Api\NomineeController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\VoteController;
 use App\Http\Controllers\Api\Admin\AdminCampaignController;
+use App\Http\Controllers\Api\Admin\AdminDonationController;
 use App\Http\Controllers\Api\Admin\AdminNomineeController;
 use App\Http\Controllers\Api\Admin\AdminPaymentController;
 use App\Http\Controllers\Api\Admin\AdminStatsController;
@@ -40,6 +43,14 @@ Route::post('/votes/callback', [VoteController::class, 'callback']);
 Route::get('/votes/{vote}/status', [VoteController::class, 'status']);
 Route::post('/votes/{vote}/simulate', [VoteController::class, 'simulateSuccess']);
 
+// Donations (BOMA BORA programme — public, no auth)
+Route::post('/donations/initiate', [DonationController::class, 'initiate']);
+Route::post('/donations/callback', [DonationController::class, 'callback']);
+Route::get('/donations/{donation}/status', [DonationController::class, 'status']);
+
+// Contact form
+Route::post('/contact', [ContactController::class, 'store']);
+
 // -------------------- Admin --------------------
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
     Route::get('/stats', AdminStatsController::class);
@@ -49,5 +60,8 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
 
     Route::get('/payments', [AdminPaymentController::class, 'index']);
     Route::get('/payments/export', [AdminPaymentController::class, 'export']);
+
+    Route::get('/donations', [AdminDonationController::class, 'index']);
+    Route::get('/donations/export', [AdminDonationController::class, 'export']);
     Route::post('/uploads', [AdminUploadController::class, 'store']);
 });
